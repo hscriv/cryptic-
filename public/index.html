@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CRYPTIC // Daily Transmission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="name-overlay" class="overlay">
+  <div class="panel name-panel">
+    <h1 class="brand">CRYPT<span>IC</span></h1>
+    <p class="tagline">Daily transmission &middot; synced to the NYT word of the day</p>
+    <label for="name-input">ENTER CALLSIGN</label>
+    <input id="name-input" maxlength="20" autocomplete="off" placeholder="PILOT NAME" />
+    <button id="name-submit" class="btn-primary">LAUNCH</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="topbar">
+    <h1 class="brand small">CRYPT<span>IC</span></h1>
+    <nav class="tabs">
+      <button id="tab-play" class="tab active">PLAY</button>
+      <button id="tab-leaderboard" class="tab">LEADERBOARD</button>
+    </nav>
+    <div class="pilot-badge">PILOT: <span id="pilot-name">—</span></div>
+  </header>
+
+  <main>
+    <section id="play-view" class="view">
+      <div id="status-line" class="status-line"></div>
+
+      <div id="board" class="board"></div>
+
+      <div id="message" class="message"></div>
+
+      <div id="keyboard" class="keyboard"></div>
+    </section>
+
+    <section id="leaderboard-view" class="view hidden">
+      <div class="scope-toggle">
+        <button id="scope-today" class="scope-btn active">TODAY</button>
+        <button id="scope-alltime" class="scope-btn">ALL-TIME</button>
+      </div>
+      <table class="leaderboard-table">
+        <thead>
+          <tr><th>#</th><th>CALLSIGN</th><th>SCORE</th><th>GUESSES</th><th>DATE</th></tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<div id="result-modal" class="overlay hidden">
+  <div class="panel result-panel">
+    <h2 id="result-title">TRANSMISSION COMPLETE</h2>
+    <p id="result-answer"></p>
+    <p id="result-score" class="result-score"></p>
+    <div class="result-actions">
+      <button id="result-leaderboard" class="btn-secondary">VIEW LEADERBOARD</button>
+      <button id="result-close" class="btn-primary">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
