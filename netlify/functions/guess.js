@@ -24,7 +24,7 @@ exports.handler = async (event) => {
       }
     } catch (err) {
       console.error("[cryptic] already-played check failed", err);
-      return jsonResponse(500, { error: "Could not verify play status.", debug: err.message });
+      return jsonResponse(500, { error: "Could not verify play status." });
     }
   }
 

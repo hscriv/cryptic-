@@ -50,7 +50,6 @@ exports.handler = async (event) => {
     return jsonResponse(200, { entry: toEntry(data) });
   } catch (err) {
     console.error("[cryptic] score insert failed", err);
-    // TODO: revert to a generic message once the Supabase connection is confirmed working.
-    return jsonResponse(500, { error: "Could not save score.", debug: err.message });
+    return jsonResponse(500, { error: "Could not save score." });
   }
 };

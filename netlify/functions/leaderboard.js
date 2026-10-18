@@ -25,8 +25,7 @@ exports.handler = async (event) => {
   const { data, error } = await query;
   if (error) {
     console.error("[cryptic] leaderboard query failed", error);
-    // TODO: revert to a generic message once the Supabase connection is confirmed working.
-    return jsonResponse(500, { error: "Could not load leaderboard.", debug: error.message, code: error.code });
+    return jsonResponse(500, { error: "Could not load leaderboard." });
   }
 
   return jsonResponse(200, { scope, date: day, entries: (data || []).map(toEntry) });
