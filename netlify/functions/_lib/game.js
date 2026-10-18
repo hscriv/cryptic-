@@ -17,15 +17,20 @@ function hashString(str) {
   return hash;
 }
 
-// NYT's daily word flips at midnight US Eastern time, not UTC midnight, so the
-// "today" used to key the puzzle has to follow that same clock.
-function dateKeyET() {
+const RESET_HOUR_MS = 5 * 60 * 60 * 1000;
+
+// The app's "today" (daily word, leaderboard date, one-play-per-day lock)
+// flips at 5am Brisbane time, not midnight anywhere. Shift the instant back
+// by the reset hour before reading Brisbane's calendar date, so anything
+// before 5am still counts as the previous day.
+function dateKey() {
+  const shifted = new Date(Date.now() - RESET_HOUR_MS);
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
+    timeZone: "Australia/Brisbane",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).formatToParts(new Date());
+  }).formatToParts(shifted);
   const lookup = Object.fromEntries(parts.map((p) => [p.type, p.value]));
   return `${lookup.year}-${lookup.month}-${lookup.day}`;
 }
@@ -114,7 +119,7 @@ module.exports = {
   MAX_PLAYER_GUESSES,
   WORD_LIST,
   WORD_SET,
-  dateKeyET,
+  dateKey,
   pickDeterministicWord,
   getAnswerForDate,
   scoreGuess,

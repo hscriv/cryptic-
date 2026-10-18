@@ -1,4 +1,4 @@
-const { dateKeyET, jsonResponse } = require("./_lib/game");
+const { dateKey, jsonResponse } = require("./_lib/game");
 const { getSupabase, toEntry } = require("./_lib/supabase");
 
 exports.handler = async (event) => {
@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   }
 
   const scope = event.queryStringParameters && event.queryStringParameters.scope === "today" ? "today" : "alltime";
-  const day = dateKeyET();
+  const day = dateKey();
   const supabase = getSupabase();
 
   let query = supabase

@@ -1,4 +1,4 @@
-const { dateKeyET, computeScore, MAX_PLAYER_GUESSES, cleanName, jsonResponse } = require("./_lib/game");
+const { dateKey, computeScore, MAX_PLAYER_GUESSES, cleanName, jsonResponse } = require("./_lib/game");
 const { getSupabase, findTodayEntry, toEntry } = require("./_lib/supabase");
 
 exports.handler = async (event) => {
@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     body = {};
   }
 
-  const day = dateKeyET();
+  const day = dateKey();
   const name = cleanName(body.name);
   const won = Boolean(body.won);
   const guessesUsed = Math.min(Math.max(Number(body.guessesUsed) || 0, 0), MAX_PLAYER_GUESSES);

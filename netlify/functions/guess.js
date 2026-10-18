@@ -1,4 +1,4 @@
-const { dateKeyET, getAnswerForDate, scoreGuess, WORD_SET, MAX_PLAYER_GUESSES, cleanName, jsonResponse } = require("./_lib/game");
+const { dateKey, getAnswerForDate, scoreGuess, WORD_SET, MAX_PLAYER_GUESSES, cleanName, jsonResponse } = require("./_lib/game");
 const { findTodayEntry } = require("./_lib/supabase");
 
 exports.handler = async (event) => {
@@ -14,7 +14,7 @@ exports.handler = async (event) => {
   }
 
   const { guess, attemptNumber, name } = body;
-  const day = dateKeyET();
+  const day = dateKey();
 
   if (name) {
     try {
