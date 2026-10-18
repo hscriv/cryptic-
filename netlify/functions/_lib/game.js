@@ -17,20 +17,19 @@ function hashString(str) {
   return hash;
 }
 
-const RESET_HOUR_MS = 5 * 60 * 60 * 1000;
-
-// The app's "today" (daily word, leaderboard date, one-play-per-day lock)
-// flips at 5am Brisbane time, not midnight anywhere. Shift the instant back
-// by the reset hour before reading Brisbane's calendar date, so anything
-// before 5am still counts as the previous day.
+// NYT's own Wordle resets at midnight in each PLAYER'S local timezone (it's
+// the one NYT puzzle that works this way, unlike Connections/Strands which
+// use a fixed ET cutoff). To get the exact same word NYT shows a Brisbane
+// player, "today" here has to be the Brisbane calendar date at plain
+// midnight — no artificial offset. This also sets the leaderboard date and
+// the one-play-per-day lock, so everything resets together.
 function dateKey() {
-  const shifted = new Date(Date.now() - RESET_HOUR_MS);
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Australia/Brisbane",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).formatToParts(shifted);
+  }).formatToParts(new Date());
   const lookup = Object.fromEntries(parts.map((p) => [p.type, p.value]));
   return `${lookup.year}-${lookup.month}-${lookup.day}`;
 }
