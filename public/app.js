@@ -338,17 +338,30 @@ async function loadLeaderboard(scope) {
   const res = await fetch(`/api/leaderboard?scope=${scope}`);
   const data = await res.json();
 
+  const head = el("leaderboard-head");
+  head.innerHTML = scope === "alltime"
+    ? "<tr><th>#</th><th>CALLSIGN</th><th>AVG SCORE</th><th>AVG GUESSES</th><th>GAMES</th></tr>"
+    : "<tr><th>#</th><th>CALLSIGN</th><th>SCORE</th><th>GUESSES</th><th>DATE</th></tr>";
+
   const body = el("leaderboard-body");
   body.innerHTML = "";
   data.entries.forEach((entry, i) => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${entry.name}</td>
-      <td>${entry.score}</td>
-      <td>${entry.won ? entry.guessesUsed : "—"}</td>
-      <td>${entry.date}</td>
-    `;
+    tr.innerHTML = scope === "alltime"
+      ? `
+        <td>${i + 1}</td>
+        <td>${entry.name}</td>
+        <td>${entry.avgScore}</td>
+        <td>${entry.avgGuesses}</td>
+        <td>${entry.gamesPlayed}</td>
+      `
+      : `
+        <td>${i + 1}</td>
+        <td>${entry.name}</td>
+        <td>${entry.score}</td>
+        <td>${entry.won ? entry.guessesUsed : "—"}</td>
+        <td>${entry.date}</td>
+      `;
     body.appendChild(tr);
   });
 
