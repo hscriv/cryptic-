@@ -28,6 +28,14 @@ body {
 
 .hidden { display: none !important; }
 
+#app {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .brand {
   font-family: 'Orbitron', sans-serif;
   font-weight: 900;
@@ -116,12 +124,14 @@ body {
   width: 100%;
   max-width: 480px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 6px 12px;
   padding: 18px 16px 8px;
 }
 
-.tabs { display: flex; gap: 8px; }
+.tabs { display: flex; gap: 8px; flex-shrink: 0; }
 .tab {
   background: transparent;
   border: 1px solid var(--border);
@@ -142,6 +152,10 @@ body {
 .pilot-badge {
   font-size: 0.7rem;
   color: var(--text-dim);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .pilot-badge span { color: var(--magenta); }
 
