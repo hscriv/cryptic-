@@ -14,7 +14,13 @@ exports.handler = async (event) => {
 
   let existingEntry = null;
   if (rawName) {
-    existingEntry = await findTodayEntry(cleanName(rawName), day);
+    try {
+      existingEntry = await findTodayEntry(cleanName(rawName), day);
+    } catch (err) {
+      // Degrade gracefully: if the leaderboard check fails, let the player
+      // start the game rather than breaking the whole daily endpoint.
+      console.error("[cryptic] already-played check failed", err);
+    }
   }
 
   return jsonResponse(200, {

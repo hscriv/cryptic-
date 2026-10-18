@@ -17,9 +17,14 @@ exports.handler = async (event) => {
   const day = dateKeyET();
 
   if (name) {
-    const existing = await findTodayEntry(cleanName(name), day);
-    if (existing) {
-      return jsonResponse(403, { error: "You've already played today's transmission." });
+    try {
+      const existing = await findTodayEntry(cleanName(name), day);
+      if (existing) {
+        return jsonResponse(403, { error: "You've already played today's transmission." });
+      }
+    } catch (err) {
+      console.error("[cryptic] already-played check failed", err);
+      return jsonResponse(500, { error: "Could not verify play status.", debug: err.message });
     }
   }
 

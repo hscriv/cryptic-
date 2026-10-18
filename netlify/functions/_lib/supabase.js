@@ -44,7 +44,7 @@ async function findTodayEntry(name, playDate) {
     .eq("play_date", playDate)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw new Error(`[${error.code || "?"}] ${error.message}`);
   return toEntry(data);
 }
 
