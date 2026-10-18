@@ -23,6 +23,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
 }
 
 .hidden { display: none !important; }
