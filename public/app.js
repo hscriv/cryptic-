@@ -13,6 +13,7 @@ let state = {
   attempt: 1,          // 1-based index of the player's current real guess
   currentLetters: [],
   gameOver: false,
+  submitting: false,   // true while a guess is in flight — blocks re-entrant submits
   letterStates: {},    // letter -> 'correct' | 'present' | 'absent'
   history: [],         // completed real guesses: { letters, feedback }
 };
@@ -207,7 +208,7 @@ function handlePhysicalKey(e) {
 }
 
 function handleKey(key) {
-  if (state.gameOver) return;
+  if (state.gameOver || state.submitting) return;
 
   if (key === "BACK") {
     state.currentLetters.pop();
@@ -242,51 +243,59 @@ function shakeRow() {
 }
 
 async function submitGuess() {
+  if (state.submitting || state.gameOver) return;
+
   if (state.currentLetters.length < 5) {
     setMessage("NOT ENOUGH LETTERS.");
     shakeRow();
     return;
   }
 
-  const guess = state.currentLetters.join("");
-  setMessage("");
+  state.submitting = true;
+  try {
+    const guess = state.currentLetters.join("");
+    const lettersSnapshot = [...state.currentLetters];
+    setMessage("");
 
-  const res = await fetch("/api/guess", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ guess, attemptNumber: state.attempt, name: state.playerName }),
-  });
-  const data = await res.json();
+    const res = await fetch("/api/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guess, attemptNumber: state.attempt, name: state.playerName }),
+    });
+    const data = await res.json();
 
-  if (res.status === 403) {
-    // Another tab/session for this callsign already finished today's game.
-    state.gameOver = true;
-    saveProgress(false, true);
-    setMessage(data.error || "ALREADY PLAYED TODAY.");
-    return;
-  }
+    if (res.status === 403) {
+      // Another tab/session for this callsign already finished today's game.
+      state.gameOver = true;
+      saveProgress(false, true);
+      setMessage(data.error || "ALREADY PLAYED TODAY.");
+      return;
+    }
 
-  if (!res.ok) {
-    setMessage(data.error || "TRANSMISSION ERROR.");
-    shakeRow();
-    return;
-  }
+    if (!res.ok) {
+      setMessage(data.error || "TRANSMISSION ERROR.");
+      shakeRow();
+      return;
+    }
 
-  state.history.push({ letters: [...state.currentLetters], feedback: data.feedback });
-  applyFeedback(state.attempt, state.currentLetters, data.feedback);
+    state.history.push({ letters: lettersSnapshot, feedback: data.feedback });
+    applyFeedback(state.attempt, lettersSnapshot, data.feedback);
 
-  const won = data.correct;
-  const outOfGuesses = state.attempt >= state.daily.maxPlayerGuesses;
+    const won = data.correct;
+    const outOfGuesses = state.attempt >= state.daily.maxPlayerGuesses;
 
-  if (won || outOfGuesses) {
-    state.gameOver = true;
-    saveProgress(won, true);
-    await submitScore(won, state.attempt);
-    setTimeout(() => showResult(won, data.answer), 600);
-  } else {
-    saveProgress(false, false);
-    state.attempt += 1;
-    state.currentLetters = [];
+    if (won || outOfGuesses) {
+      state.gameOver = true;
+      saveProgress(won, true);
+      await submitScore(won, state.attempt);
+      setTimeout(() => showResult(won, data.answer), 600);
+    } else {
+      saveProgress(false, false);
+      state.attempt += 1;
+      state.currentLetters = [];
+    }
+  } finally {
+    state.submitting = false;
   }
 }
 
